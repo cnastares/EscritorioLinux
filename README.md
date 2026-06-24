@@ -55,11 +55,16 @@ Para facilitar la transición desde Windows, se han configurado los siguientes a
 *   **`Super + Enter`**: Abre la Terminal del sistema (`gnome-terminal`).
 *   **`Super + Espacio`** o **`Super + D`**: Abre el buscador Spotlight y lanzador de aplicaciones (DMS).
 
-### Gestión de Ventanas
+### Gestión de Ventanas y Comportamiento
 *   **`Super + Q`**: Cierra la ventana activa actual.
 *   **`Super + F`**: Maximiza la columna de la ventana seleccionada.
 *   **`Super + Shift + F`**: Pone la ventana en pantalla completa.
+*   **`Super + T`**: Alterna entre el modo flotante/solapado (estilo clásico de Windows/Ubuntu) y el modo mosaico (tiling) de Niri. Las ventanas se abren de forma flotante por defecto.
 *   **`Super + R`**: Alterna entre anchos de columna preestablecidos (1/3, 1/2 y 2/3 de pantalla).
+*   **Mover/Redimensionar Ventanas**:
+    *   Para mover una ventana flotante: Mantén presionado **`Super`** y arrastra la ventana usando el **clic izquierdo** del ratón.
+    *   Para cambiar el tamaño de cualquier ventana: Mantén presionado **`Super`** y arrastra los bordes usando el **clic derecho** del ratón.
+*   **Minimizar Ventanas**: Haz clic en el icono de la ventana activa en el Dock (barra de tareas inferior) para minimizarla. Haz clic nuevamente para restaurarla.
 
 ### Navegación (Tiling horizontal)
 *   **`Super + Flecha Izquierda / Derecha`** (o **`Super + H / L`**): Desplazarse por el tapiz horizontal de ventanas.
@@ -77,7 +82,28 @@ Para facilitar la transición desde Windows, se han configurado los siguientes a
 
 ---
 
+## Barra de Título y Botones de Ventana (Minimizar, Maximizar, Cerrar)
+
+Por diseño, el compositor de ventanas **Niri** no dibuja botones de ventana ni barras de título a nivel del sistema (Server-Side Decorations). La presencia y apariencia de estos botones depende de cada aplicación (Client-Side Decorations).
+
+Por defecto, Ubuntu oculta los botones de minimizar y maximizar. Para habilitar los tres botones tradicionales en las aplicaciones que los soportan (como la suite GNOME, navegadores, etc.), puedes elegir una de las siguientes opciones:
+
+### Opción 1: Ejecutar comando en la terminal
+Ejecuta la siguiente instrucción para activar los botones en tu sesión actual:
+```bash
+gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,maximize,close"
+```
+*(Si prefieres tener los botones en el lado izquierdo estilo macOS, usa el valor `"close,minimize,maximize:"` en su lugar).*
+
+### Opción 2: Instalación automática mediante el paquete `.deb`
+El instalador de este repositorio incluye un archivo de anulación de configuración de GLib (`99_escritoriolinux.gschema.override`) que establece automáticamente este comportamiento por defecto a nivel del sistema para todos los usuarios.
+
+*Nota: Las aplicaciones que no admiten decoraciones del lado del cliente por diseño (como terminales o herramientas de sistema) se mantendrán sin bordes. Para cerrarlas o maximizarlas, utiliza siempre los atajos de teclado (`Super + Q` para cerrar, `Super + F` para maximizar, o haz clic en su icono en el dock para minimizar).*
+
+---
+
 ## Personalización de Colores Dinámica (Material You)
 
 La barra de estado, el centro de control y los menús de DankMaterialShell adaptan sus colores de forma dinámica según tu fondo de pantalla actual.
 *   Para cambiar los colores del sistema, simplemente cambia tu imagen de fondo de pantalla habitual desde la terminal o el configurador, y el motor de temas (`matugen`) recalculará el espectro de colores automáticamente.
+
