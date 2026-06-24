@@ -22,19 +22,22 @@ set -e
     apt-get install -y software-properties-common
   fi
 
-  # Add PPAs for Niri and DMS
+  # Add PPA for Niri and Quickshell
   add-apt-repository -y ppa:avengemedia/danklinux
-  add-apt-repository -y ppa:avengemedia/dms
 
-  # Update and install packages
+  # Update and install packages (Niri and Quickshell)
   apt-get update
-  apt-get install -y niri dms
+  apt-get install -y niri quickshell
 
   # Copy Niri presets to /etc/skel/ for new users
   mkdir -p /etc/skel/.config/niri
-  mkdir -p /etc/skel/.config/dms
+  mkdir -p /etc/skel/.config/quickshell
   if [ -f /usr/share/escritoriolinux/config/niri/config.kdl ]; then
     cp /usr/share/escritoriolinux/config/niri/config.kdl /etc/skel/.config/niri/config.kdl
+  fi
+  if [ -d /usr/share/escritoriolinux/dms ]; then
+    rm -rf /etc/skel/.config/quickshell/dms
+    cp -r /usr/share/escritoriolinux/dms /etc/skel/.config/quickshell/dms
   fi
 
   # Deploy presets to existing users
@@ -45,15 +48,19 @@ set -e
 
       echo "Deploying presets for user: $user_name ($user_home)"
       mkdir -p "$user_home/.config/niri"
-      mkdir -p "$user_home/.config/dms"
+      mkdir -p "$user_home/.config/quickshell"
 
       if [ -f /usr/share/escritoriolinux/config/niri/config.kdl ]; then
         cp /usr/share/escritoriolinux/config/niri/config.kdl "$user_home/.config/niri/config.kdl"
       fi
+      if [ -d /usr/share/escritoriolinux/dms ]; then
+        rm -rf "$user_home/.config/quickshell/dms"
+        cp -r /usr/share/escritoriolinux/dms "$user_home/.config/quickshell/dms"
+      fi
 
       # Fix folder ownership
       chown -R "$user_name:$user_name" "$user_home/.config/niri"
-      chown -R "$user_name:$user_name" "$user_home/.config/dms"
+      chown -R "$user_name:$user_name" "$user_home/.config/quickshell"
     fi
   done
 
