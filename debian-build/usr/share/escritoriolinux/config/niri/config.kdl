@@ -127,4 +127,7 @@ window-rule {
     // Draw rounded window corners
     geometry-corner-radius 12
     clip-to-geometry true
+
+    // Open all windows in traditional floating mode by default
+    open-floating true
 }
