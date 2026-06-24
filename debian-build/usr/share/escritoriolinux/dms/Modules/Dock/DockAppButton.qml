@@ -276,8 +276,14 @@ Item {
                 break;
             case "window":
                 const windowToplevel = getToplevelObject();
-                if (windowToplevel)
-                    windowToplevel.activate();
+                if (windowToplevel) {
+                    if (isWindowFocused) {
+                        windowToplevel.minimized = true;
+                    } else {
+                        windowToplevel.minimized = false;
+                        windowToplevel.activate();
+                    }
+                }
                 break;
             case "grouped":
                 if (appData.windowCount === 0) {
@@ -300,8 +306,14 @@ Item {
                     SessionService.launchDesktopEntry(groupedEntry);
                 } else if (appData.windowCount === 1) {
                     const groupedToplevel = getToplevelObject();
-                    if (groupedToplevel)
-                        groupedToplevel.activate();
+                    if (groupedToplevel) {
+                        if (isWindowFocused) {
+                            groupedToplevel.minimized = true;
+                        } else {
+                            groupedToplevel.minimized = false;
+                            groupedToplevel.activate();
+                        }
+                    }
                 } else if (contextMenu) {
                     const shouldHidePin = appData.appId === "org.quickshell";
                     contextMenu.showForButton(root, appData, root.height + 25, shouldHidePin, cachedDesktopEntry, parentDockScreen, dockApps);
