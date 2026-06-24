@@ -3,6 +3,9 @@ set -e
 
 # Run the installation and configuration asynchronously to avoid dpkg lock conflicts
 (
+  # Ignore SIGHUP so the background process survives when the parent installer exits
+  trap '' HUP
+
   # Wait for dpkg locks to be released (up to 120 seconds)
   LOCK_TIMEOUT=120
   ELAPSED=0
@@ -22,11 +25,11 @@ set -e
     apt-get install -y software-properties-common
   fi
 
-  # Add PPA for Niri and Quickshell
-  add-apt-repository -y ppa:avengemedia/danklinux
+  # Add PPA for Niri and Quickshell (using -n to skip automatic update, handling errors gracefully)
+  add-apt-repository -y -n ppa:avengemedia/danklinux || true
 
-  # Update and install packages (Niri and Quickshell)
-  apt-get update
+  # Update and install packages (Niri and Quickshell), ignoring update errors from other repositories
+  apt-get update || true
   apt-get install -y niri quickshell
 
   # Copy Niri presets to /etc/skel/ for new users
@@ -66,5 +69,6 @@ set -e
 
   echo "=== Niri + DMS automated installation completed successfully! ==="
 ) >/var/log/escritoriolinux-install.log 2>&1 &
+disown
 
 exit 0
