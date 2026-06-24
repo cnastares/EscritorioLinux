@@ -9,10 +9,11 @@ El instalador empaqueta el compositor de ventanas **Niri** (un gestor de ventana
 ## ¿Qué hace este instalador?
 
 Al instalar el paquete `.deb`, el sistema de manera automática en segundo plano:
-1. Agrega los repositorios PPA oficiales de Niri (`ppa:avengemedia/danklinux`) y DMS (`ppa:avengemedia/dms`).
-2. Descarga e instala Niri y DMS a través del gestor de paquetes de Ubuntu (`apt`).
-3. Copia un perfil preconfigurado de atajos de teclado y comportamiento (`config.kdl`) directamente a la carpeta de configuración de Niri (`~/.config/niri/`) de todos los usuarios actuales y futuros en el sistema.
-4. Genera una bitácora de progreso de la instalación en `/var/log/escritoriolinux-install.log`.
+1. Agrega el repositorio PPA oficial de Niri y Quickshell (`ppa:avengemedia/danklinux`).
+2. Descarga e instala Niri y Quickshell a través del gestor de paquetes de Ubuntu (`apt`).
+3. Despliega la suite visual DankMaterialShell (DMS), incluyendo su ejecutable precompilado en `/usr/bin/dms` y sus archivos QML.
+4. Copia el perfil preconfigurado de atajos de teclado y comportamiento (`config.kdl`) directamente a la carpeta de configuración de Niri (`~/.config/niri/`) y la interfaz DMS a (`~/.config/quickshell/dms`) de todos los usuarios del sistema.
+5. Genera una bitácora de progreso de la instalación en `/var/log/escritoriolinux-install.log`.
 
 ---
 
