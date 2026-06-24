@@ -57,6 +57,9 @@ binds {
     // Close focused window
     Mod+Q { close-window; }
 
+    // Toggle floating mode (overlapping window like Windows/Ubuntu)
+    Mod+T { toggle-window-floating; }
+
     // Window focus navigation (Super + Arrows or Super + HJKL)
     Mod+Left  { focus-column-left; }
     Mod+Right { focus-column-right; }
