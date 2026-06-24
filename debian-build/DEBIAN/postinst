@@ -1,0 +1,63 @@
+#!/bin/bash
+set -e
+
+# Run the installation and configuration asynchronously to avoid dpkg lock conflicts
+(
+  # Wait for dpkg locks to be released (up to 120 seconds)
+  LOCK_TIMEOUT=120
+  ELAPSED=0
+  while [ $ELAPSED -lt $LOCK_TIMEOUT ]; do
+    if ! fuser /var/lib/dpkg/lock >/dev/null 2>&1 && ! fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; then
+      break
+    fi
+    sleep 1
+    ELAPSED=$((ELAPSED + 1))
+  done
+
+  echo "=== Starting Niri + DMS automated installation ==="
+
+  # Ensure software-properties-common is available
+  if ! dpkg -s software-properties-common >/dev/null 2>&1; then
+    apt-get update
+    apt-get install -y software-properties-common
+  fi
+
+  # Add PPAs for Niri and DMS
+  add-apt-repository -y ppa:avengemedia/danklinux
+  add-apt-repository -y ppa:avengemedia/dms
+
+  # Update and install packages
+  apt-get update
+  apt-get install -y niri dms
+
+  # Copy Niri presets to /etc/skel/ for new users
+  mkdir -p /etc/skel/.config/niri
+  mkdir -p /etc/skel/.config/dms
+  if [ -f /usr/share/escritoriolinux/config/niri/config.kdl ]; then
+    cp /usr/share/escritoriolinux/config/niri/config.kdl /etc/skel/.config/niri/config.kdl
+  fi
+
+  # Deploy presets to existing users
+  for user_home in /home/*; do
+    if [ -d "$user_home" ]; then
+      user_name=$(basename "$user_home")
+      [ "$user_name" = "*" ] && continue
+
+      echo "Deploying presets for user: $user_name ($user_home)"
+      mkdir -p "$user_home/.config/niri"
+      mkdir -p "$user_home/.config/dms"
+
+      if [ -f /usr/share/escritoriolinux/config/niri/config.kdl ]; then
+        cp /usr/share/escritoriolinux/config/niri/config.kdl "$user_home/.config/niri/config.kdl"
+      fi
+
+      # Fix folder ownership
+      chown -R "$user_name:$user_name" "$user_home/.config/niri"
+      chown -R "$user_name:$user_name" "$user_home/.config/dms"
+    fi
+  done
+
+  echo "=== Niri + DMS automated installation completed successfully! ==="
+) >/var/log/escritoriolinux-install.log 2>&1 &
+
+exit 0
