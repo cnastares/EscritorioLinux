@@ -32,6 +32,9 @@ set -e
   apt-get update || true
   apt-get install -y niri quickshell
 
+  # Compile GLib schemas to apply the window button layout overrides
+  glib-compile-schemas /usr/share/glib-2.0/schemas || true
+
   # Copy Niri presets to /etc/skel/ for new users
   mkdir -p /etc/skel/.config/niri
   mkdir -p /etc/skel/.config/quickshell
