@@ -4,7 +4,7 @@ Section: misc
 Priority: optional
 Architecture: all
 Maintainer: Calif <calif@local.host>
-Depends: curl, git, software-properties-common
+Depends: curl, git, software-properties-common, qml6-module-qtquick-effects, qml6-module-qt-labs-folderlistmodel
 Description: Automated installer for Niri Scrollable Window Manager & DankMaterialShell.
  Installs and configures Niri and DMS on Ubuntu, setting up custom
  configurations for users migrating from Windows to Linux.
