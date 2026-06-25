@@ -57,10 +57,21 @@ set -e
       mkdir -p "$user_home/.config/quickshell"
 
       if [ -f /usr/share/escritoriolinux/config/niri/config.kdl ]; then
-        cp /usr/share/escritoriolinux/config/niri/config.kdl "$user_home/.config/niri/config.kdl"
+        if [ ! -f "$user_home/.config/niri/config.kdl" ]; then
+          cp /usr/share/escritoriolinux/config/niri/config.kdl "$user_home/.config/niri/config.kdl"
+        else
+          # Create a dated backup of the user's custom config
+          cp "$user_home/.config/niri/config.kdl" "$user_home/.config/niri/config.kdl.bak.$(date +%F_%H-%M-%S)"
+          # Write the updated template as config.kdl.new so they can review/merge new bindings
+          cp /usr/share/escritoriolinux/config/niri/config.kdl "$user_home/.config/niri/config.kdl.new"
+        fi
       fi
       if [ -d /usr/share/escritoriolinux/dms ]; then
-        rm -rf "$user_home/.config/quickshell/dms"
+        if [ -d "$user_home/.config/quickshell/dms" ]; then
+          # Save a backup of the old DMS directory
+          rm -rf "$user_home/.config/quickshell/dms.bak"
+          mv "$user_home/.config/quickshell/dms" "$user_home/.config/quickshell/dms.bak"
+        fi
         cp -r /usr/share/escritoriolinux/dms "$user_home/.config/quickshell/dms"
       fi
 
