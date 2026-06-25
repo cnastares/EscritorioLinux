@@ -85,21 +85,21 @@ Para facilitar la transición desde Windows, se han configurado los siguientes a
 
 ---
 
-## Barra de Título y Botones de Ventana (Minimizar, Maximizar, Cerrar)
+## Barra de Título y Botones de Ventana (Maximizar, Cerrar)
 
 Por diseño, el compositor de ventanas **Niri** no dibuja botones de ventana ni barras de título a nivel del sistema (Server-Side Decorations). La presencia y apariencia de estos botones depende de cada aplicación (Client-Side Decorations).
 
-Por defecto, Ubuntu oculta los botones de minimizar y maximizar. Para habilitar los tres botones tradicionales en las aplicaciones que los soportan (como la suite GNOME, navegadores, etc.), puedes elegir una de las siguientes opciones:
+Por defecto, Ubuntu oculta el botón de maximizar. Para habilitar los botones de maximizar y cerrar en las aplicaciones que los soportan (como la suite GNOME, navegadores, etc.), puedes elegir una de las siguientes opciones:
 
 ### Opción 1: Ejecutar comando en la terminal
 Ejecuta la siguiente instrucción para activar los botones en tu sesión actual:
 ```bash
-gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,maximize,close"
+gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:maximize,close"
 ```
-*(Si prefieres tener los botones en el lado izquierdo estilo macOS, usa el valor `"close,minimize,maximize:"` en su lugar).*
+*(Si prefieres tener los botones en el lado izquierdo estilo macOS, usa el valor `"close,maximize:"` en su lugar).*
 
 ### Opción 2: Instalación automática mediante el paquete `.deb`
-El instalador de este repositorio incluye un archivo de anulación de configuración de GLib (`99_escritoriolinux.gschema.override`) que establece automáticamente este comportamiento por defecto a nivel del sistema para todos los usuarios.
+El instalador de este repositorio incluye un archivo de anulación de configuración de GLib (`99_escritoriolinux.gschema.override`) que establece automáticamente este comportamiento por defecto a nivel del sistema para todos los usuarios, mostrando únicamente "Maximizar" y "Cerrar" (ya que la acción de minimizar no está soportada nativamente por Niri y se realiza a través del Dock o teclado).
 
 *Nota: Las aplicaciones que no admiten decoraciones del lado del cliente por diseño (como terminales o herramientas de sistema) se mantendrán sin bordes. Para cerrarlas o maximizarlas, utiliza siempre los atajos de teclado (`Super + Q` para cerrar, `Super + F` para maximizar, o haz clic en su icono en el dock para minimizar).*
 
