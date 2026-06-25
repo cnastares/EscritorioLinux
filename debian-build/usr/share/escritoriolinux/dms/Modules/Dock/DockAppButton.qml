@@ -277,11 +277,15 @@ Item {
             case "window":
                 const windowToplevel = getToplevelObject();
                 if (windowToplevel) {
-                    if (isWindowFocused) {
-                        windowToplevel.minimized = true;
+                    if (CompositorService.isNiri) {
+                        Proc.runCommand(null, ["niri-scratchpad", "target", "appid", appData.appId]);
                     } else {
-                        windowToplevel.minimized = false;
-                        windowToplevel.activate();
+                        if (isWindowFocused) {
+                            windowToplevel.minimized = true;
+                        } else {
+                            windowToplevel.minimized = false;
+                            windowToplevel.activate();
+                        }
                     }
                 }
                 break;
@@ -307,11 +311,15 @@ Item {
                 } else if (appData.windowCount === 1) {
                     const groupedToplevel = getToplevelObject();
                     if (groupedToplevel) {
-                        if (isWindowFocused) {
-                            groupedToplevel.minimized = true;
+                        if (CompositorService.isNiri) {
+                            Proc.runCommand(null, ["niri-scratchpad", "target", "appid", appData.appId]);
                         } else {
-                            groupedToplevel.minimized = false;
-                            groupedToplevel.activate();
+                            if (isWindowFocused) {
+                                groupedToplevel.minimized = true;
+                            } else {
+                                groupedToplevel.minimized = false;
+                                groupedToplevel.activate();
+                            }
                         }
                     }
                 } else if (contextMenu) {
