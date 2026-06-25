@@ -45,6 +45,8 @@ layout {
 
 // Start DankMaterialShell (DMS) at startup
 spawn-at-startup "dms" "run"
+// Start niri-scratchpad daemon at startup
+spawn-at-startup "niri-scratchpad" "daemon"
 
 binds {
     // Launch Terminal (gnome-terminal)
