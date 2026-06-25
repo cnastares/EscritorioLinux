@@ -157,7 +157,16 @@ var SPEC = {
             { pattern: "beepertexts", replacement: "beeper", type: "exact" },
             { pattern: "home assistant desktop", replacement: "homeassistant-desktop", type: "exact" },
             { pattern: "com.transmissionbt.transmission", replacement: "transmission-gtk", type: "contains" },
-            { pattern: "^steam_app_(\\d+)$", replacement: "steam_icon_$1", type: "regex" }
+            { pattern: "^steam_app_(\\d+)$", replacement: "steam_icon_$1", type: "regex" },
+            { pattern: "brave", replacement: "brave_brave", type: "exact" },
+            { pattern: "brave-browser", replacement: "brave_brave", type: "exact" },
+            { pattern: "dbeaver", replacement: "dbeaver-ce_dbeaver-ce", type: "exact" },
+            { pattern: "dbeaver-ce", replacement: "dbeaver-ce_dbeaver-ce", type: "exact" },
+            { pattern: "postman", replacement: "postman_postman", type: "exact" },
+            { pattern: "drawio", replacement: "drawio_drawio", type: "exact" },
+            { pattern: "gnome-system-monitor", replacement: "gnome-system-monitor_gnome-system-monitor", type: "exact" },
+            { pattern: "notepad-plus-plus", replacement: "notepad-plus-plus_notepad-plus-plus", type: "exact" },
+            { pattern: "snap-store", replacement: "snap-store_snap-store", type: "exact" }
         ]
     },
     centeringMode: { def: "index" },
