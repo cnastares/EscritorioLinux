@@ -64,7 +64,10 @@ Para facilitar la transición desde Windows, se han configurado los siguientes a
 *   **Mover/Redimensionar Ventanas**:
     *   Para mover una ventana flotante: Mantén presionado **`Super`** y arrastra la ventana usando el **clic izquierdo** del ratón.
     *   Para cambiar el tamaño de cualquier ventana: Mantén presionado **`Super`** y arrastra los bordes usando el **clic derecho** del ratón.
-*   **Minimizar Ventanas**: Haz clic en el icono de la ventana activa en el Dock (barra de tareas inferior) para minimizarla. Haz clic nuevamente para restaurarla.
+*   **Minimizar Ventanas**: 
+    *   **Teclado**: Presiona **`Super + M`** para ocultar/minimizar la ventana activa. Presiona **`Super + M`** de nuevo para restaurarla y traerla al frente.
+    *   **Ratón**: Haz clic en el icono de la ventana activa en el Dock (barra de tareas inferior) para minimizarla. Haz clic nuevamente para restaurarla.
+
 
 ### Navegación (Tiling horizontal)
 *   **`Super + Flecha Izquierda / Derecha`** (o **`Super + H / L`**): Desplazarse por el tapiz horizontal de ventanas.
