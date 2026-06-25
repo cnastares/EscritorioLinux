@@ -278,7 +278,7 @@ Item {
                 const windowToplevel = getToplevelObject();
                 if (windowToplevel) {
                     if (CompositorService.isNiri) {
-                        Proc.runCommand(null, ["niri-scratchpad", "target", "appid", appData.appId]);
+                        Proc.runCommand(null, ["niri-scratchpad", "target", "appid", windowToplevel.appId || appData.appId]);
                     } else {
                         if (isWindowFocused) {
                             windowToplevel.minimized = true;
@@ -312,7 +312,7 @@ Item {
                     const groupedToplevel = getToplevelObject();
                     if (groupedToplevel) {
                         if (CompositorService.isNiri) {
-                            Proc.runCommand(null, ["niri-scratchpad", "target", "appid", appData.appId]);
+                            Proc.runCommand(null, ["niri-scratchpad", "target", "appid", groupedToplevel.appId || appData.appId]);
                         } else {
                             if (isWindowFocused) {
                                 groupedToplevel.minimized = true;
