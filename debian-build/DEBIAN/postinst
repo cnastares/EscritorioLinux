@@ -70,6 +70,9 @@ set -e
     fi
   done
 
+  # Update desktop database for protocol handler registration
+  update-desktop-database /usr/share/applications || true
+
   echo "=== Niri + DMS automated installation completed successfully! ==="
 ) >/var/log/escritoriolinux-install.log 2>&1 &
 disown
