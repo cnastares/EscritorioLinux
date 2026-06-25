@@ -139,3 +139,13 @@ window-rule {
     // Open all windows in traditional floating mode by default
     open-floating true
 }
+
+// Window switcher configuration (Alt+Tab / Ctrl+Tab)
+recent-windows {
+    binds {
+        Alt+Tab { next-window; }
+        Alt+Shift+Tab { previous-window; }
+        Ctrl+Tab { next-window; }
+        Ctrl+Shift+Tab { previous-window; }
+    }
+}
