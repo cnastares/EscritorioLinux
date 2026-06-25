@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+import subprocess
+import json
+import sys
+import time
+
+def get_active_output_geometry():
+    try:
+        res = subprocess.run(["niri", "msg", "-j", "outputs"], capture_output=True, text=True)
+        outputs = json.loads(res.stdout)
+        for name, data in outputs.items():
+            if data.get("logical_size"):
+                return data["logical_size"][0], data["logical_size"][1]
+    except Exception as e:
+        print(f"Error getting output geometry: {e}", file=sys.stderr)
+    return 1920, 1080
+
+output_width, output_height = get_active_output_geometry()
+print(f"Detected screen geometry: {output_width}x{output_height}", flush=True)
+
+# Keep track of states
+# win_id -> { "id": int, "is_floating": bool, "width": int, "height": int, "is_focused": bool, "fullscreened": bool, "was_floating_originally": bool, "last_float_time": float }
+window_states = {}
+
+def get_window_state(win_id):
+    if win_id not in window_states:
+        window_states[win_id] = {
+            "id": win_id,
+            "is_floating": False,
+            "width": None,
+            "height": None,
+            "is_focused": False,
+            "fullscreened": False,
+            "was_floating_originally": False,
+            "last_float_time": 0.0
+        }
+    return window_states[win_id]
+
+def handle_transition(win_id, prev_floating, prev_width, prev_height, prev_fullscreened, prev_was_floating_originally):
+    state = window_states[win_id]
+    
+    # We only automate actions for the focused window to avoid background window loops
+    if not state["is_focused"]:
+        return
+        
+    width = state["width"]
+    height = state["height"]
+    is_floating = state["is_floating"]
+    
+    if width is None or height is None:
+        return
+        
+    w_width, w_height = get_active_output_geometry()
+    
+    # Update last_float_time if it transitioned from floating to tiling
+    if not is_floating and prev_floating:
+        state["last_float_time"] = time.time()
+        
+    # Compute states
+    is_fullscreen = (abs(width - w_width) < 5) and (abs(height - w_height) < 5)
+    is_maximized = (not is_floating) and (not is_fullscreen) and (w_width - width < 80)
+    
+    # Detect previous states
+    prev_fullscreen = (prev_width is not None and prev_height is not None and 
+                       abs(prev_width - w_width) < 5 and abs(prev_height - w_height) < 5)
+    prev_maximized = (not prev_floating) and (not prev_fullscreen) and (prev_width is not None and w_width - prev_width < 80)
+    
+    # Transition: Window became maximized
+    if is_maximized and not prev_maximized and not prev_fullscreen:
+        if not state["fullscreened"]:
+            # Check if it was floating originally (either it was floating in prev state,
+            # or it was floating very recently, indicating a client-side maximize click)
+            was_floating_originally = prev_floating or (time.time() - state["last_float_time"] < 0.5)
+            print(f"[Helper] Window {win_id} was maximized. Triggering fullscreen. Original float: {was_floating_originally}", flush=True)
+            state["was_floating_originally"] = was_floating_originally
+            state["fullscreened"] = True
+            subprocess.run(["niri", "msg", "action", "fullscreen-window", "--id", str(win_id)])
+            
+    # Transition: Window exited fullscreen to maximized
+    elif is_maximized and prev_fullscreen:
+        if state["fullscreened"]:
+            print(f"[Helper] Window {win_id} exited fullscreen. Restoring original layout.", flush=True)
+            state["fullscreened"] = False
+            if state["was_floating_originally"]:
+                print(f"[Helper] Toggling floating for window {win_id}.", flush=True)
+                subprocess.run(["niri", "msg", "action", "toggle-window-floating", "--id", str(win_id)])
+            else:
+                print(f"[Helper] Un-maximizing window {win_id}.", flush=True)
+                subprocess.run(["niri", "msg", "action", "maximize-column"])
+                
+    # If the window is now floating but was previously fullscreened, reset flags
+    if is_floating and state["fullscreened"]:
+        state["fullscreened"] = False
+
+# Start listening to events
+proc = subprocess.Popen(["niri", "msg", "-j", "event-stream"], stdout=subprocess.PIPE, text=True)
+
+while True:
+    line = proc.stdout.readline()
+    if not line:
+        break
+    try:
+        event = json.loads(line)
+        
+        if "WindowsChanged" in event:
+            windows_list = event["WindowsChanged"]["windows"]
+            for w in windows_list:
+                win_id = w["id"]
+                state = get_window_state(win_id)
+                state["is_floating"] = w.get("is_floating", False)
+                state["is_focused"] = w.get("is_focused", False)
+                tile_size = w.get("layout", {}).get("tile_size")
+                if tile_size:
+                    state["width"] = tile_size[0]
+                    state["height"] = tile_size[1]
+                    
+        elif "WindowOpenedOrChanged" in event:
+            w = event["WindowOpenedOrChanged"]["window"]
+            win_id = w["id"]
+            state = get_window_state(win_id)
+            
+            prev_floating = state["is_floating"]
+            prev_width = state["width"]
+            prev_height = state["height"]
+            prev_fullscreened = state["fullscreened"]
+            prev_was_floating_originally = state["was_floating_originally"]
+            
+            state["is_floating"] = w.get("is_floating", False)
+            state["is_focused"] = w.get("is_focused", False)
+            tile_size = w.get("layout", {}).get("tile_size")
+            if tile_size:
+                state["width"] = tile_size[0]
+                state["height"] = tile_size[1]
+                
+            handle_transition(win_id, prev_floating, prev_width, prev_height, prev_fullscreened, prev_was_floating_originally)
+            
+        elif "WindowLayoutsChanged" in event:
+            changes = event["WindowLayoutsChanged"]["changes"]
+            for win_id, layout in changes:
+                state = get_window_state(win_id)
+                
+                prev_floating = state["is_floating"]
+                prev_width = state["width"]
+                prev_height = state["height"]
+                prev_fullscreened = state["fullscreened"]
+                prev_was_floating_originally = state["was_floating_originally"]
+                
+                tile_size = layout.get("tile_size")
+                if tile_size:
+                    state["width"] = tile_size[0]
+                    state["height"] = tile_size[1]
+                    
+                handle_transition(win_id, prev_floating, prev_width, prev_height, prev_fullscreened, prev_was_floating_originally)
+                
+        elif "WindowFocusChanged" in event:
+            focused_id = event["WindowFocusChanged"].get("id")
+            for win_id, state in window_states.items():
+                state["is_focused"] = (win_id == focused_id)
+                
+    except Exception as e:
+        print(f"Error processing event: {e}", file=sys.stderr)

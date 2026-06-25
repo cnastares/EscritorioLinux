@@ -47,6 +47,8 @@ layout {
 spawn-at-startup "dms" "run"
 // Start niri-scratchpad daemon at startup
 spawn-at-startup "niri-scratchpad" "daemon"
+// Start niri-maximize-helper daemon at startup
+spawn-at-startup "niri-maximize-helper"
 
 binds {
     // Launch Terminal (gnome-terminal)
